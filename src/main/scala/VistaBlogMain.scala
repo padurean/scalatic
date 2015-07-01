@@ -31,7 +31,7 @@ object VistaBlogMain extends App {
     val d = new File(s"$path/new")
     if (d.exists && d.isDirectory) {
       for (file <- d.listFiles() if file.isFile) {
-        val markdown = stringFromFile(file)
+        val markdown = "{\"text\": \"" + stringFromFile(file) + "\"}"
         println(s"Transforming ${file.getName} ...")
         val html = Http(GHMDRendererUrl).postData(markdown).asString.body
         val htmlFull = s"$header\n$html\n$footer"

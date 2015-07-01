@@ -28,8 +28,8 @@ class VistaBlogSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     Files.move(
       Paths.get(s"$basePath/source/posts/mySecondPost.md"),
       Paths.get(s"$basePath/new/mySecondPost.md"))
-    Files.delete(Paths.get(s"$basePath/target/myFirstPost.html"))
-    Files.delete(Paths.get(s"$basePath/target/mySecondPost.html"))
+//    Files.delete(Paths.get(s"$basePath/target/myFirstPost.html"))
+//    Files.delete(Paths.get(s"$basePath/target/mySecondPost.html"))
   }
   
   after {  }
