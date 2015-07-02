@@ -41,7 +41,9 @@ Should be used together with the
 
   OR
 
-  Download the [pre-built Scalatic jar](https://github.com/padurean) and run with
+  Download the
+  [pre-built Scalatic jar](https://github.com/padurean/scalatic/dist/scalatic-0.1.0.jar)
+  and run with
 
   `java -jar scalatic-0.1.0 /path/to/your/blog`
 
