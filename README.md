@@ -31,9 +31,16 @@ Should be used together with the
 
   ```
 
-  Only the _**new**_ and _**source**_ folders need to be created -
+  Only the _**new**_ and _**source**_ folders need to be manually created -
   the _source/posts_ and _target_ folder are created automatically if they don't
   exist.
+
+  Also, it is required that _**header.html**_ and _**footer.html**_ files exist
+  in the _source_ folder.
+
+  Any other file (except directories) present in the _source_ folder are
+  considered "static" files and will be copied without any transformation to
+  the _target_ folder.
 
 2. Clone the [Scalatic](https://github.com/padurean/scalatic) repo and run with
 
