@@ -1,9 +1,9 @@
 import com.github.retronym.SbtOneJar._
 
 
-name := """vistablog"""
+name := """scalatic"""
 
-mainClass in Compile := Some("VistaBlogMain")
+mainClass in Compile := Some("Scalatic")
 
 scalaVersion := "2.11.6"
 
