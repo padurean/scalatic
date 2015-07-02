@@ -7,7 +7,7 @@ Dead simple static blog generator written in Scala with minimum dependencies.
 Uses GitHub API to render as HTML posts written in GitHub-flavored Markdwon
 syntax.
 
-Should be used together with a copy of the the
+Should be used together with the
 [Github Markdown CSS](https://github.com/sindresorhus/github-markdown-css)
 (a copy is included in the example from the _**test**_ folder)
 
