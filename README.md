@@ -41,8 +41,8 @@ Should be used together with the
 
   OR
 
-  Download the
-  [pre-built Scalatic jar](https://github.com/padurean/scalatic/dist/scalatic-0.1.0.jar)
+  Download the latest Scalactic release as a
+  [single jar](https://github.com/padurean/scalatic/releases/download/0.1.0/scalatic-0.1.0.jar)
   and run with
 
   `java -jar scalatic-0.1.0 /path/to/your/blog`
