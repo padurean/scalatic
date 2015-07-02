@@ -35,7 +35,7 @@ Should be used together with a copy of the the
   the _source/posts_ and _target_ folder are created automatically if they don't
   exist.
 
-2. Clone the [Scalactic](https://github.com/padurean/scalatic) repo and run with
+2. Clone the [Scalatic](https://github.com/padurean/scalatic) repo and run with
 
   `sbt "run /path/to/your/blog"`
 
