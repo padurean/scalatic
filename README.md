@@ -9,7 +9,7 @@ syntax.
 
 Should be used together with the
 [Github Markdown CSS](https://github.com/sindresorhus/github-markdown-css)
-(a copy is included in the example from the _**test**_ folder)
+(a copy is included in the _**src/test/scala/scalatictest/source**_ folder)
 
 
 ##Usage
