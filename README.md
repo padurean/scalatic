@@ -32,8 +32,8 @@ Should be used together with the
   ```
 
   Only the _**new**_ and _**source**_ folders need to be manually created -
-  the _source/posts_ and _target_ folder are created automatically if they don't
-  exist.
+  the _source/posts_ and _target_ folders are created automatically if they
+  don't exist.
 
   Also, it is required that _**header.html**_ and _**footer.html**_ files exist
   in the _source_ folder.
