@@ -25,7 +25,7 @@ Should be used together with a copy of the the
   ```
   blog            -> root folder of your blog; can have any name you want
     |_ new        -> any markdown source files that should be (re)rendered to HTML
-    |_ source     -> contains all 'static' files like _header.html_, _.css_s or _.js_s
+    |_ source     -> contains any files that are not blog posts (e.g. html, css, js)
       |_ posts    -> all markdown source files that have already been rendered to HTML
     |_ target     -> this is where your generated blog will be saved
 
