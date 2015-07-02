@@ -13,7 +13,8 @@ class VistaBlogSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   
   test("Vista Blog - Test static blog generation") {
 
-    VistaBlogMain.main(Array(basePath))
+    VistaBlog.main(Array(basePath))
+    assert(new File(s"$basePath/target/github-markdown.css").exists())
     assert(new File(s"$basePath/target/myFirstPost.html").exists())
     assert(new File(s"$basePath/target/mySecondPost.html").exists())
     assert(new File(s"$basePath/source/posts/myFirstPost.md").exists())
@@ -28,8 +29,9 @@ class VistaBlogSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     Files.move(
       Paths.get(s"$basePath/source/posts/mySecondPost.md"),
       Paths.get(s"$basePath/new/mySecondPost.md"))
-//    Files.delete(Paths.get(s"$basePath/target/myFirstPost.html"))
-//    Files.delete(Paths.get(s"$basePath/target/mySecondPost.html"))
+    Files.delete(Paths.get(s"$basePath/target/myFirstPost.html"))
+    Files.delete(Paths.get(s"$basePath/target/mySecondPost.html"))
+    Files.delete(Paths.get(s"$basePath/target/github-markdown.css"))
   }
   
   after {  }
