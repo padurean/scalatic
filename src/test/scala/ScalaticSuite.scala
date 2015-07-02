@@ -16,22 +16,24 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
 
     Scalatic.main(Array(basePath))
     assert(Files.exists(Paths.get(s"$basePath/target/github-markdown.css")))
-    assert(Files.exists(Paths.get(s"$basePath/target/myFirstPost.html")))
-    assert(Files.exists(Paths.get(s"$basePath/target/mySecondPost.html")))
-    assert(Files.exists(Paths.get(s"$basePath/source/posts/myFirstPost.md")))
-    assert(Files.exists(Paths.get(s"$basePath/source/posts/mySecondPost.md")))
-    assert(!Files.exists(Paths.get(s"$basePath/new/myFirstPost.md")))
-    assert(!Files.exists(Paths.get(s"$basePath/new/mySecondPost.md")))
+    assert(Files.exists(Paths.get(s"$basePath/target/index.html")))
+    assert(Files.exists(Paths.get(s"$basePath/target/my-first-post.html")))
+    assert(Files.exists(Paths.get(s"$basePath/target/my-second-post.html")))
+    assert(Files.exists(Paths.get(s"$basePath/source/posts/my-first-post.md")))
+    assert(Files.exists(Paths.get(s"$basePath/source/posts/my-second-post.md")))
+    assert(!Files.exists(Paths.get(s"$basePath/new/my-first-post.md")))
+    assert(!Files.exists(Paths.get(s"$basePath/new/my-second-post.md")))
 
     // put'em back and clean the target
     Files.move(
-      Paths.get(s"$basePath/source/posts/myFirstPost.md"),
-      Paths.get(s"$basePath/new/myFirstPost.md"))
+      Paths.get(s"$basePath/source/posts/my-first-post.md"),
+      Paths.get(s"$basePath/new/my-first-post.md"))
     Files.move(
-      Paths.get(s"$basePath/source/posts/mySecondPost.md"),
-      Paths.get(s"$basePath/new/mySecondPost.md"))
-    Files.delete(Paths.get(s"$basePath/target/myFirstPost.html"))
-    Files.delete(Paths.get(s"$basePath/target/mySecondPost.html"))
+      Paths.get(s"$basePath/source/posts/my-second-post.md"),
+      Paths.get(s"$basePath/new/my-second-post.md"))
+    Files.delete(Paths.get(s"$basePath/target/my-second-post.html"))
+    Files.delete(Paths.get(s"$basePath/target/my-first-post.html"))
+    Files.delete(Paths.get(s"$basePath/target/index.html"))
     Files.delete(Paths.get(s"$basePath/target/github-markdown.css"))
 
     // delete the source/posts and target folders

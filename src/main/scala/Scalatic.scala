@@ -1,5 +1,8 @@
+import java.io.File
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Path, Files, Paths, StandardCopyOption}
+
+import org.joda.time.DateTime
 
 import scala.collection.JavaConverters._
 
@@ -30,7 +33,13 @@ object Scalatic extends App {
     val targetPath = s"$path/$target"
     createFolderIfNotExists(targetPath)
 
-    renderNewPosts(newPath, sourcePath, sourcePostsPath, targetPath)
+    // TODO OGG: add requireFile method and call it here to check that header and footer are there
+    val header = stringFromFile(s"$sourcePath/header.html")
+    val footer = stringFromFile(s"$sourcePath/footer.html")
+    renderNewPosts(
+      newPath, sourcePath, sourcePostsPath, targetPath, header, footer)
+
+    generateIndex(sourcePostsPath, targetPath, header, footer)
 
     copyFiles(
       sourcePath,
@@ -38,27 +47,46 @@ object Scalatic extends App {
       excludeFiles = Set("header.html", "footer.html"))
   }
 
+  private def generateIndex(
+      sourcePostsPath: String,
+      targetPath: String,
+      header: String,
+      footer: String) = {
+
+    val linksToPosts = for (
+      srcFile <- Files.newDirectoryStream(Paths.get(sourcePostsPath)).asScala
+      if !Files.isDirectory(srcFile)
+    ) yield {
+      val srcFileName = srcFile.getFileName.toString
+      val srcFileNamePiecesNoExt = srcFileName.split('.').dropRight(1)
+      val url = srcFileNamePiecesNoExt.mkString("", ".", ".html")
+      val title = srcFileNamePiecesNoExt.mkString(" ").split('-').mkString(" ")
+      s"<a href='$url'>$title</a>"
+    }
+
+    val html = linksToPosts.mkString("<br/>\n")
+    writeFile(s"$header\n$html\n$footer", s"$targetPath/index.html")
+  }
+
   private def renderNewPosts(
     newPath: String,
     sourcePath: String,
     sourcePostsPath: String,
-    targetPath: String)
+    targetPath: String,
+    header: String,
+    footer: String)
   : Unit = {
-    val header = stringFromFile(s"$sourcePath/header.html")
-    val footer = stringFromFile(s"$sourcePath/footer.html")
-
     val newPostsFolder = Paths.get(newPath)
     for (
       newSrcFile <- Files.newDirectoryStream(newPostsFolder).asScala
       if !Files.isDirectory(newSrcFile)
-    )
-    {
+    ) {
       val html = render(newSrcFile, header, footer)
 
       val srcFileName = newSrcFile.getFileName.toString
 
       val destFileName =
-        srcFileName.split('.').dropRight(1).mkString("", "", ".html")
+        srcFileName.split('.').dropRight(1).mkString("", ".", ".html")
       writeFile(html, s"$targetPath/$destFileName")
 
       val processedSrcFilePath = s"$sourcePostsPath/$srcFileName"
@@ -122,9 +150,11 @@ object Scalatic extends App {
       file <- Files.newDirectoryStream(srcFolder).asScala
       if !excludeFiles(file.getFileName.toString) && !Files.isDirectory(file)
     ) {
+      val destFile = Paths.get(s"$destFolderPath/${file.getFileName.toString}")
+      println(s"Copying ${file.toString} to ${destFile.toString} ...")
       Files.copy(
         file,
-        Paths.get(s"$destFolderPath/${file.getFileName.toString}"),
+        destFile,
         StandardCopyOption.REPLACE_EXISTING)
     }
   }
