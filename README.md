@@ -1,11 +1,6 @@
 #Scalatic
-========
 
 **!IMPORTANT**: at this moment this project is a WiP.
-
-
-##Description
-=============
 
 Dead simple static blog generator written in Scala with minimum dependencies.
 
@@ -18,7 +13,6 @@ Should be used together with a copy of the the
 
 
 ##Usage
-=======
 
 1. Create your blog folder structure
 
