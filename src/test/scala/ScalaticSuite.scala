@@ -5,7 +5,8 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 
 class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
-  implicit override val patienceConfig = PatienceConfig(timeout = Span(5, Seconds))
+  implicit override val patienceConfig =
+    PatienceConfig(timeout = Span(5, Seconds))
 
   val basePath = "src/test/scala/scalatictest"
 

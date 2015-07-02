@@ -1,5 +1,5 @@
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths, StandardCopyOption}
+import java.nio.file.{Path, Files, Paths, StandardCopyOption}
 
 import scala.collection.JavaConverters._
 
@@ -10,46 +10,25 @@ object Scalatic extends App {
   val defaultSource = "source"
   val defaultTarget = "target"
 
-  val options = args match {
-    case Array(aPath) =>
-      Some((aPath, defaultSource, defaultTarget))
-    case Array(aPath, aSource) =>
-      Some((aPath, aSource, defaultTarget))
-    case Array(aPath, aSource, aTarget, _*) =>
-      Some((aPath, aSource, aTarget))
-    case _ =>
-      println(
-        s"Usage: java -jar scalatic-x.x.x <blogPath> "+
-        s"[<source> default 'source'] [<target> default 'target']")
-      None
+  val options = validateArgs(args).orElse {
+    println(
+      s"Usage: java -jar scalatic-x.x.x <blogPath> " +
+      s"[<source> default 'source'] [<target> default 'target']")
+    None
   }
 
   options.foreach { case (path, source, target) =>
-    // require that new folder exists
     val newPath = s"$path/new"
-    val newFolder = Paths.get(newPath)
-    require(
-      Files.exists(newFolder)  && Files.isDirectory(newFolder),
-      s"$newPath does not exist or is not a folder")
+    requireFolder(newPath)
 
-    // require that source folder exists
     val sourcePath = s"$path/$source"
-    val sourceFolder = Paths.get(sourcePath)
-    require(
-      Files.exists(sourceFolder) && Files.isDirectory(sourceFolder),
-      s"$sourcePath does not exist or is not a folder")
+    requireFolder(sourcePath)
 
-    // if the source posts folder does not exist, create it
     val sourcePostsPath = s"$sourcePath/posts"
-    val srcPostsFolder = Paths.get(sourcePostsPath)
-    if (Files.notExists(srcPostsFolder) || !Files.isDirectory(srcPostsFolder))
-      Files.createDirectory(srcPostsFolder)
+    createFolderIfNotExists(sourcePostsPath)
 
-    // if the target folder does not exist, create it
     val targetPath = s"$path/$target"
-    val targetFolder = Paths.get(targetPath)
-    if (Files.notExists(targetFolder) || !Files.isDirectory(targetFolder))
-      Files.createDirectory(targetFolder)
+    createFolderIfNotExists(targetPath)
 
     renderNewPosts(newPath, sourcePath, sourcePostsPath, targetPath)
 
@@ -58,6 +37,81 @@ object Scalatic extends App {
       targetPath,
       excludeFiles = Set("header.html", "footer.html"))
   }
+
+  private def renderNewPosts(
+    newPath: String,
+    sourcePath: String,
+    sourcePostsPath: String,
+    targetPath: String)
+  : Unit = {
+    val header = stringFromFile(s"$sourcePath/header.html")
+    val footer = stringFromFile(s"$sourcePath/footer.html")
+
+    val newPostsFolder = Paths.get(newPath)
+    for (
+      newSrcFile <- Files.newDirectoryStream(newPostsFolder).asScala
+      if !Files.isDirectory(newSrcFile)
+    )
+    {
+      val html = render(newSrcFile, header, footer)
+
+      val srcFileName = newSrcFile.getFileName.toString
+
+      val destFileName =
+        srcFileName.split('.').dropRight(1).mkString("", "", ".html")
+      writeFile(html, s"$targetPath/$destFileName")
+
+      val processedSrcFilePath = s"$sourcePostsPath/$srcFileName"
+      moveFile(newSrcFile, Paths.get(processedSrcFilePath))
+    }
+  }
+
+  private def moveFile(srcFile: Path, destFile: Path) = {
+    println(s"Moving ${srcFile.toString } to ${destFile.toString} ...")
+    Files.move(srcFile, destFile, StandardCopyOption.REPLACE_EXISTING)
+  }
+
+  private def writeFile(fileContent: String, filePath: String): Path = {
+    println(s"Writing $filePath ...")
+    Files.write(
+      Paths.get(filePath),
+      fileContent.getBytes(StandardCharsets.UTF_8))
+  }
+
+  private def render(file: Path, header: String, footer: String): String = {
+    val srcFilePath: String = file.toString
+    println(s"\nRendering $srcFilePath ...")
+    val markdown = "{\"text\": \"" + stringFromFile(srcFilePath) + "\"}"
+    val html = Http(GHMDRendererUrl).postData(markdown).asString.body
+    val htmlFull = s"$header\n$html\n$footer"
+    htmlFull
+  }
+
+  private def requireFolder(pathToFolder: String) = {
+    val folder = Paths.get(pathToFolder)
+    require(
+      Files.exists(folder) && Files.isDirectory(folder),
+      s"$pathToFolder does not exist or is not a folder")
+  }
+
+  private def createFolderIfNotExists(pathToFolder: String) = {
+    val folder = Paths.get(pathToFolder)
+    if (Files.notExists(folder) || !Files.isDirectory(folder))
+      Files.createDirectory(folder)
+  }
+
+  private def validateArgs(scalaticArgs: Array[String])
+  : Option[(String,String,String)] =
+    scalaticArgs match {
+      case Array(aPath) =>
+        Some((aPath, defaultSource, defaultTarget))
+      case Array(aPath, aSource) =>
+        Some((aPath, aSource, defaultTarget))
+      case Array(aPath, aSource, aTarget, _*) =>
+        Some((aPath, aSource, aTarget))
+      case _ =>
+        None
+    }
 
   private def copyFiles(
     srcFolderPath: String,
@@ -75,53 +129,8 @@ object Scalatic extends App {
     }
   }
 
-  private def renderNewPosts(
-    newPath: String,
-    sourcePath: String,
-    sourcePostsPath: String,
-    targetPath: String)
-  : Unit = {
-    val header = stringFromFile(s"$sourcePath/header.html")
-    val footer = stringFromFile(s"$sourcePath/footer.html")
-
-    val newPostsFolder = Paths.get(newPath)
-    for (
-      file <- Files.newDirectoryStream(newPostsFolder).asScala
-      if !Files.isDirectory(file)
-    )
-    {
-      val srcFileName = file.getFileName.toString
-      val srcFileNamePieces = srcFileName.split('.')
-      val destFileName =
-        srcFileNamePieces.dropRight(1).mkString("", "", ".html")
-
-      // render
-      println(s"\nRendering $srcFileName => $destFileName ...")
-      val markdown =
-        "{\"text\": \"" + stringFromFile(file.toString) + "\"}"
-      val html = Http(GHMDRendererUrl).postData(markdown).asString.body
-      val htmlFull = s"$header\n$html\n$footer"
-
-      // write
-      val destFilePath = s"$targetPath/$destFileName"
-      println(s"Writing $destFilePath ...")
-      Files.write(
-        Paths.get(destFilePath),
-        htmlFull.getBytes(StandardCharsets.UTF_8))
-
-      // move source post file to processed folder
-      val processedSrcFilePath = s"$sourcePostsPath/$srcFileName"
-      println(s"Moving ${file.toString} to $processedSrcFilePath ...")
-      Files.move(
-        file,
-        Paths.get(processedSrcFilePath),
-        StandardCopyOption.REPLACE_EXISTING)
-    }
-  }
-
   private def stringFromFile(filePath: String): String = {
     val source = io.Source.fromFile(filePath)
     try source.getLines mkString "\n" finally source.close()
   }
 }
-
