@@ -56,12 +56,8 @@ a:hover {
     background-image: linear-gradient(120deg, #155799, #159957); }*/
 
     /* Ogg's customization of header bg gradient*/
-    background-color: #517fa4;
-    background: -webkit-linear-gradient(90deg, #517fa4 10%, #243949 90%); /* Chrome 10+, Saf5.1+ */
-    background:    -moz-linear-gradient(90deg, #517fa4 10%, #243949 90%); /* FF3.6+ */
-    background:     -ms-linear-gradient(90deg, #517fa4 10%, #243949 90%); /* IE10 */
-    background:      -o-linear-gradient(90deg, #517fa4 10%, #243949 90%); /* Opera 11.10+ */
-    background:         linear-gradient(90deg, #517fa4 10%, #243949 90%); /* W3C */ }
+    background-color: #49a09d;
+    background-image: linear-gradient(120deg, #49a09d, #5f2c82); }
 
 @media screen and (min-width: 64em) {
     .page-header {
@@ -124,7 +120,7 @@ a:hover {
     font-weight: normal;
     /*color: #159957; }*/
 /* Ogg's customization*/
-    color: #517fa4; }
+    color: #54638c; }
 .main-content p {
     margin-bottom: 1em; }
 .main-content code {
@@ -240,4 +236,7 @@ a:hover {
 
 /* Ogg's customizations */
 .blog-index-link {
-    display: block; }
+    display: block;
+    font-size: 1.25em; }
+a {
+    color: #49a09d; }

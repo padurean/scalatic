@@ -7,6 +7,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 
 import ScalaticSuite._
+import Scalatic.stringFromFile
 
 class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   implicit override val patienceConfig =
@@ -17,6 +18,7 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   val srcPath = s"$basePath/source"
   val srcPostsPath = s"$srcPath/posts"
   val targetPath = s"$basePath/target"
+  val expectedPath = s"$basePath/expected"
 
 
   val firstPostName = "Blog-post-Sample-One"
@@ -35,6 +37,7 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   test("Scalatic - Test static blog generation") {
 
     Scalatic.main(Array(basePath))
+
     assert(Files.exists(Paths.get(s"$targetPath/normalize.css")))
     assert(Files.exists(Paths.get(s"$targetPath/github-markdown.css")))
     assert(Files.exists(Paths.get(s"$targetPath/github-light.css")))
@@ -42,10 +45,22 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     assert(Files.exists(Paths.get(s"$targetPath/index.html")))
     assert(Files.exists(Paths.get(s"$targetPath/$firstPostHtmlName")))
     assert(Files.exists(Paths.get(s"$targetPath/$secondPostHtmlName")))
+
     assert(Files.exists(Paths.get(s"$srcPostsPath/$firstPostMdName")))
     assert(Files.exists(Paths.get(s"$srcPostsPath/$secondPostMdName")))
+
     assert(!Files.exists(Paths.get(s"$newPath/$firstPostMdName")))
     assert(!Files.exists(Paths.get(s"$newPath/$secondPostMdName")))
+
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/index.html"))(
+        actual = stringFromFile(s"$targetPath/index.html"))
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/$firstPostHtmlName"))(
+      actual = stringFromFile(s"$targetPath/$firstPostHtmlName"))
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/$secondPostHtmlName"))(
+        actual = stringFromFile(s"$targetPath/$secondPostHtmlName"))
 
     // put'em back
     Files.move(
@@ -56,8 +71,8 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
       Paths.get(s"$newPath/$secondPostMdName"))
 
     // delete the source/posts and target folders
-    deleteFolder(s"$basePath/source/posts")
     deleteFolder(s"$basePath/target")
+    deleteFolder(s"$basePath/source/posts")
   }
   
   after {  }

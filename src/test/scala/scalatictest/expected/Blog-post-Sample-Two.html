@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Scalatic blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="normalize.css" media="screen">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" type="text/css" href="github-markdown.css" media="screen">
+  <link rel="stylesheet" type="text/css" href="github-light.css" media="screen">
+  <link rel="stylesheet" type="text/css" href="cayman.css" media="screen">
+</head>
+<body>
+  <section class="page-header">
+    <h1 class="project-name">Your Scalatic blog</h1>
+    <h2 class="project-tagline">An enlightening one line description of your Scalatic blog.</h2>
+    <a href="." class="btn">Blog Index</a>
+    <a href="." class="btn">About</a>
+  </section>
+  <section class="main-content">
+<h1>
+<a id="user-content-blog-post-sample-two" class="anchor" href="#blog-post-sample-two" aria-hidden="true"><span class="octicon octicon-link"></span></a>Blog post Sample Two</h1>
+
+<p>Some wise words here :)</p>
+
+<h2>
+<a id="user-content-some-random-scala-code-just-to-see-how-it-looks" class="anchor" href="#some-random-scala-code-just-to-see-how-it-looks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some random Scala code just to see how it looks</h2>
+
+<div class="highlight highlight-scala"><pre><span class="pl-k">object</span> <span class="pl-en">Scalatic</span> {
+  <span class="pl-k">private</span> <span class="pl-k">def</span> <span class="pl-en">render</span>(<span class="pl-v">file</span>: <span class="pl-en">Path</span>, <span class="pl-v">header</span>: <span class="pl-k">String</span>, <span class="pl-v">footer</span>: <span class="pl-k">String</span>)<span class="pl-k">:</span> <span class="pl-k">String</span> <span class="pl-k">=</span> {
+    <span class="pl-k">val</span> <span class="pl-en">srcFilePath</span><span class="pl-k">:</span> <span class="pl-k">String</span> <span class="pl-k">=</span> file.toString
+    println(s<span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>Rendering $srcFilePath ...<span class="pl-pds">"</span></span>)
+    <span class="pl-k">val</span> <span class="pl-en">markdown</span> <span class="pl-k">=</span> stringFromFile(srcFilePath)
+    <span class="pl-k">val</span> <span class="pl-en">html</span> <span class="pl-k">=</span> <span class="pl-en">Http</span>(<span class="pl-en">GHMDRendererUrl</span>)
+      .postData(markdown)
+      .header(<span class="pl-s"><span class="pl-pds">"</span>Content-Type<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>text/plain<span class="pl-pds">"</span></span>)
+      .header(<span class="pl-s"><span class="pl-pds">"</span>Charset<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>UTF-8<span class="pl-pds">"</span></span>)
+      .option(<span class="pl-en">HttpOptions</span>.readTimeout(<span class="pl-c1">10000</span>))
+      .asString.body
+    <span class="pl-k">val</span> <span class="pl-en">htmlFull</span> <span class="pl-k">=</span> s<span class="pl-s"><span class="pl-pds">"</span>$header<span class="pl-cce">\n</span>$html<span class="pl-cce">\n</span>$footer<span class="pl-pds">"</span></span>
+    htmlFull
+  }
+}</pre></div>
+
+<h2>
+<a id="user-content-some-section" class="anchor" href="#some-section" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some section</h2>
+
+<ol>
+<li><p>Some ordered list item one</p></li>
+<li><p>Some ordered list item two</p></li>
+</ol>
+
+<footer class="site-footer">
+    <span class="site-footer-owner"><a href="">Some link</a> in a cool footer owned by <a href="">You</a> &copy; 2015-.</span>
+
+    <span class="site-footer-credits">This page uses a customized version of the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+</footer>
+
+</section>
+
+
+</body>
+</html>

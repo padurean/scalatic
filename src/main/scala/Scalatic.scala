@@ -59,7 +59,11 @@ object Scalatic extends App {
       footer: String) = {
 
     val linksToPosts = for (
-      srcFile <- Files.newDirectoryStream(Paths.get(sourcePostsPath)).asScala
+      srcFile <- Files.newDirectoryStream(Paths.get(sourcePostsPath))
+        .asScala.toSeq.sortWith { (l, r) =>
+          Files.getLastModifiedTime(l).compareTo(
+            Files.getLastModifiedTime(r)) > 0
+        }
       if !Files.isDirectory(srcFile)
     ) yield {
       val srcFileName = srcFile.getFileName.toString
@@ -179,7 +183,7 @@ object Scalatic extends App {
     }
   }
 
-  private def stringFromFile(filePath: String): String = {
+  def stringFromFile(filePath: String): String = {
     val source = io.Source.fromFile(filePath)
     try source.getLines mkString "\n" finally source.close()
   }
