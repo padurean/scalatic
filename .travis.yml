@@ -2,7 +2,7 @@ language: scala
 jdk: oraclejdk7
 sudo: false
 script:
-  - "sbt clean test"
+  - "sbt clean test one-jar"
 scala:
   - 2.10.5
   - 2.11.5
