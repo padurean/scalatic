@@ -7,7 +7,7 @@ Some wise words here :)
 
 ```scala
 object Scalatic {
-  private def render(file: Path, header: String, footer: String): String = {
+  def render(file: Path, header: String, footer: String): String = {
     val srcFilePath: String = file.toString
     println(s"\nRendering $srcFilePath ...")
     val markdown = stringFromFile(srcFilePath)
