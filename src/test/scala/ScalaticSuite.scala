@@ -52,18 +52,15 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     assert(!Files.exists(Paths.get(s"$newPath/$firstPostMdName")))
     assert(!Files.exists(Paths.get(s"$newPath/$secondPostMdName")))
 
-// FIXME OGG: this test fails randomly due to the order of posts links.
-//            fix: date needs to be appended to the file name as convention
-//    assertResult(
-//      expected = stringFromFile(s"$expectedPath/index.html"))(
-//        actual = stringFromFile(s"$targetPath/index.html"))
-// FIXME OGG: these seem too fragile; needs investigation
-//    assertResult(
-//      expected = stringFromFile(s"$expectedPath/$firstPostHtmlName"))(
-//      actual = stringFromFile(s"$targetPath/$firstPostHtmlName"))
-//    assertResult(
-//      expected = stringFromFile(s"$expectedPath/$secondPostHtmlName"))(
-//        actual = stringFromFile(s"$targetPath/$secondPostHtmlName"))
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/index.html"))(
+        actual = stringFromFile(s"$targetPath/index.html"))
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/$firstPostHtmlName"))(
+      actual = stringFromFile(s"$targetPath/$firstPostHtmlName"))
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/$secondPostHtmlName"))(
+        actual = stringFromFile(s"$targetPath/$secondPostHtmlName"))
 
     // put'em back
     Files.move(
