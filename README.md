@@ -38,7 +38,7 @@ Should be used together with the
   Also, it is required that _**header.html**_ and _**footer.html**_ files exist
   in the _source_ folder.
 
-  Any other file (except directories) present in the _source_ folder are
+  Any other files (folders are ignored) present in the _source_ folder are
   considered "static" files and will be copied without any transformation to
   the _target_ folder.
 
