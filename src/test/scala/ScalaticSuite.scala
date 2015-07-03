@@ -1,46 +1,89 @@
-import java.nio.file.{Files, Paths}
+import java.io.IOException
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file._
 
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
+
+import ScalaticSuite._
 
 class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   implicit override val patienceConfig =
     PatienceConfig(timeout = Span(5, Seconds))
 
   val basePath = "src/test/scala/scalatictest"
+  val newPath = s"$basePath/new"
+  val srcPath = s"$basePath/source"
+  val srcPostsPath = s"$srcPath/posts"
+  val targetPath = s"$basePath/target"
+
+
+  val firstPostName = "Blog-post-Sample-One"
+  val secondPostName = "Blog-post-Sample-Two"
+
+  val htmlExt = ".html"
+  val mdExt = ".md"
+
+  val firstPostMdName = s"$firstPostName$mdExt"
+  val secondPostMdName = s"$secondPostName$mdExt"
+  val firstPostHtmlName = s"$firstPostName$htmlExt"
+  val secondPostHtmlName = s"$secondPostName$htmlExt"
 
   before {  }
   
   test("Scalatic - Test static blog generation") {
 
     Scalatic.main(Array(basePath))
-    assert(Files.exists(Paths.get(s"$basePath/target/github-markdown.css")))
-    assert(Files.exists(Paths.get(s"$basePath/target/index.html")))
-    assert(Files.exists(Paths.get(s"$basePath/target/my-first-post.html")))
-    assert(Files.exists(Paths.get(s"$basePath/target/my-second-post.html")))
-    assert(Files.exists(Paths.get(s"$basePath/source/posts/my-first-post.md")))
-    assert(Files.exists(Paths.get(s"$basePath/source/posts/my-second-post.md")))
-    assert(!Files.exists(Paths.get(s"$basePath/new/my-first-post.md")))
-    assert(!Files.exists(Paths.get(s"$basePath/new/my-second-post.md")))
+    assert(Files.exists(Paths.get(s"$targetPath/normalize.css")))
+    assert(Files.exists(Paths.get(s"$targetPath/github-markdown.css")))
+    assert(Files.exists(Paths.get(s"$targetPath/github-light.css")))
+    assert(Files.exists(Paths.get(s"$targetPath/cayman.css")))
+    assert(Files.exists(Paths.get(s"$targetPath/index.html")))
+    assert(Files.exists(Paths.get(s"$targetPath/$firstPostHtmlName")))
+    assert(Files.exists(Paths.get(s"$targetPath/$secondPostHtmlName")))
+    assert(Files.exists(Paths.get(s"$srcPostsPath/$firstPostMdName")))
+    assert(Files.exists(Paths.get(s"$srcPostsPath/$secondPostMdName")))
+    assert(!Files.exists(Paths.get(s"$newPath/$firstPostMdName")))
+    assert(!Files.exists(Paths.get(s"$newPath/$secondPostMdName")))
 
-    // put'em back and clean the target
+    // put'em back
     Files.move(
-      Paths.get(s"$basePath/source/posts/my-first-post.md"),
-      Paths.get(s"$basePath/new/my-first-post.md"))
+      Paths.get(s"$srcPostsPath/$firstPostMdName"),
+      Paths.get(s"$newPath/$firstPostMdName"))
     Files.move(
-      Paths.get(s"$basePath/source/posts/my-second-post.md"),
-      Paths.get(s"$basePath/new/my-second-post.md"))
-    Files.delete(Paths.get(s"$basePath/target/my-second-post.html"))
-    Files.delete(Paths.get(s"$basePath/target/my-first-post.html"))
-    Files.delete(Paths.get(s"$basePath/target/index.html"))
-    Files.delete(Paths.get(s"$basePath/target/github-markdown.css"))
+      Paths.get(s"$srcPostsPath/$secondPostMdName"),
+      Paths.get(s"$newPath/$secondPostMdName"))
 
     // delete the source/posts and target folders
-    Files.delete(Paths.get(s"$basePath/source/posts"))
-    Files.delete(Paths.get(s"$basePath/target"))
+    deleteFolder(s"$basePath/source/posts")
+    deleteFolder(s"$basePath/target")
   }
   
   after {  }
+}
+
+object ScalaticSuite {
+  def deleteFolder(folderPath: String) = {
+    val folder = Paths.get(folderPath)
+    Files.walkFileTree(folder, new SimpleFileVisitor[Path]() {
+      override def visitFile(
+        file: Path,
+        attrs: BasicFileAttributes)
+      : FileVisitResult = {
+        Files.delete(file)
+        FileVisitResult.CONTINUE
+      }
+
+      override def postVisitDirectory(
+        dir: Path,
+        exc: IOException)
+      : FileVisitResult = {
+        Files.delete(dir)
+        FileVisitResult.CONTINUE
+      }
+
+    })
+  }
 }
 

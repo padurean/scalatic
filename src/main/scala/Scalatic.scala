@@ -6,10 +6,10 @@ import org.joda.time.DateTime
 
 import scala.collection.JavaConverters._
 
-import scalaj.http.Http
+import scalaj.http.{HttpOptions, Http}
 
 object Scalatic extends App {
-  val GHMDRendererUrl = "https://api.github.com/markdown"
+  val GHMDRendererUrl = "https://api.github.com/markdown/raw"
   val defaultSource = "source"
   val defaultTarget = "target"
 
@@ -66,7 +66,7 @@ object Scalatic extends App {
       val srcFileNamePiecesNoExt = srcFileName.split('.').dropRight(1)
       val url = srcFileNamePiecesNoExt.mkString("", ".", ".html")
       val title = srcFileNamePiecesNoExt.mkString(" ").split('-').mkString(" ")
-      s"<a href='$url'>$title</a>"
+      s"<a href='$url' class='blog-index-link'>$title</a>"
     }
 
     val html = linksToPosts.mkString("<br/>\n")
@@ -114,8 +114,13 @@ object Scalatic extends App {
   private def render(file: Path, header: String, footer: String): String = {
     val srcFilePath: String = file.toString
     println(s"\nRendering $srcFilePath ...")
-    val markdown = "{\"text\": \"" + stringFromFile(srcFilePath) + "\"}"
-    val html = Http(GHMDRendererUrl).postData(markdown).asString.body
+    val markdown = stringFromFile(srcFilePath)
+    val html = Http(GHMDRendererUrl)
+      .postData(markdown)
+      .header("Content-Type", "text/plain")
+      .header("Charset", "UTF-8")
+      .option(HttpOptions.readTimeout(10000))
+      .asString.body
     val htmlFull = s"$header\n$html\n$footer"
     htmlFull
   }

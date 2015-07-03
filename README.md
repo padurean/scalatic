@@ -48,7 +48,7 @@ Should be used together with the
 
   OR
 
-  Download the latest Scalactic release as a
+  Download the latest Scalatic release as a
   [single jar](https://github.com/padurean/scalatic/releases/download/0.1.0/scalatic-0.1.0.jar)
   and run with
 
