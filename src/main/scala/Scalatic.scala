@@ -22,10 +22,16 @@ object Scalatic extends App {
 
   options.foreach { case (path, source, target) =>
     val newPath = s"$path/new"
-    requireFolder(newPath)
+    requireFile(newPath, mustBeFolder = true)
 
     val sourcePath = s"$path/$source"
-    requireFolder(sourcePath)
+    requireFile(sourcePath, mustBeFolder = true)
+
+    val headerPath = s"$sourcePath/header.html"
+    requireFile(headerPath, mustBeFolder = false)
+
+    val footerPath = s"$sourcePath/footer.html"
+    requireFile(footerPath, mustBeFolder = false)
 
     val sourcePostsPath = s"$sourcePath/posts"
     createFolderIfNotExists(sourcePostsPath)
@@ -33,9 +39,8 @@ object Scalatic extends App {
     val targetPath = s"$path/$target"
     createFolderIfNotExists(targetPath)
 
-    // TODO OGG: add requireFile method and call it here to check that header and footer are there
-    val header = stringFromFile(s"$sourcePath/header.html")
-    val footer = stringFromFile(s"$sourcePath/footer.html")
+    val header = stringFromFile(headerPath)
+    val footer = stringFromFile(footerPath)
     renderNewPosts(
       newPath, sourcePath, sourcePostsPath, targetPath, header, footer)
 
@@ -115,11 +120,13 @@ object Scalatic extends App {
     htmlFull
   }
 
-  private def requireFolder(pathToFolder: String) = {
-    val folder = Paths.get(pathToFolder)
+  private def requireFile(pathToFile: String, mustBeFolder: Boolean) = {
+    val requiredFile = Paths.get(pathToFile)
+    val isFolder = Files.isDirectory(requiredFile)
+    val folderOrFile = if (mustBeFolder) "folder" else "file"
     require(
-      Files.exists(folder) && Files.isDirectory(folder),
-      s"$pathToFolder does not exist or is not a folder")
+      Files.exists(requiredFile) && (if (mustBeFolder) isFolder else !isFolder),
+      s"$pathToFile does not exist or is not a $folderOrFile")
   }
 
   private def createFolderIfNotExists(pathToFolder: String) = {
@@ -132,14 +139,22 @@ object Scalatic extends App {
   : Option[(String,String,String)] =
     scalaticArgs match {
       case Array(aPath) =>
-        Some((aPath, defaultSource, defaultTarget))
+        Some((noEndSlash(aPath), defaultSource, defaultTarget))
       case Array(aPath, aSource) =>
-        Some((aPath, aSource, defaultTarget))
+        Some((noEndSlash(aPath), noEndSlash(aSource), defaultTarget))
       case Array(aPath, aSource, aTarget, _*) =>
-        Some((aPath, aSource, aTarget))
+        Some((noEndSlash(aPath), noEndSlash(aSource), noEndSlash(aTarget)))
       case _ =>
         None
     }
+
+  private def noEndSlash(str: String) = {
+    if(str.endsWith("/") || str.endsWith("\\")) {
+      str.dropRight(1)
+    } else {
+      str
+    }
+  }
 
   private def copyFiles(
     srcFolderPath: String,
