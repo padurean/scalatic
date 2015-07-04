@@ -1,13 +1,12 @@
 import java.io.IOException
-import java.nio.file.attribute.BasicFileAttributes
 import java.nio.file._
+import java.nio.file.attribute.BasicFileAttributes
 
+import Scalatic.stringFromFile
+import ScalaticSuite._
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
-
-import ScalaticSuite._
-import Scalatic.stringFromFile
 
 class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   implicit override val patienceConfig =
@@ -21,8 +20,8 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
   val expectedPath = s"$basePath/expected"
 
 
-  val firstPostName = "Blog-post-Sample-One"
-  val secondPostName = "Blog-post-Sample-Two"
+  val firstPostName = "Blog-post-Sample-One-2015-06-15-03-45"
+  val secondPostName = "Blog-post-Sample-Two-2015-07-03-23-45"
 
   val htmlExt = ".html"
   val mdExt = ".md"
@@ -52,10 +51,9 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     assert(!Files.exists(Paths.get(s"$newPath/$firstPostMdName")))
     assert(!Files.exists(Paths.get(s"$newPath/$secondPostMdName")))
 
-    // FIXME OGG: order of posts in index is incorrect (i.e. is not newest first)
-//    assertResult(
-//      expected = stringFromFile(s"$expectedPath/index.html"))(
-//        actual = stringFromFile(s"$targetPath/index.html"))
+    assertResult(
+      expected = stringFromFile(s"$expectedPath/index.html"))(
+        actual = stringFromFile(s"$targetPath/index.html"))
     assertResult(
       expected = stringFromFile(s"$expectedPath/$firstPostHtmlName"))(
       actual = stringFromFile(s"$targetPath/$firstPostHtmlName"))

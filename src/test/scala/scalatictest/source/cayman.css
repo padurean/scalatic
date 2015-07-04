@@ -238,5 +238,9 @@ a:hover {
 .blog-index-link {
     display: block;
     font-size: 1.25em; }
+.blog-index-date {
+    opacity: 0.44;
+    font-size: 0.85em;
+}
 a {
     color: #49a09d; }
