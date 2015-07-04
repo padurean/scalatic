@@ -51,6 +51,14 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     assert(!Files.exists(Paths.get(s"$newPath/$firstPostMdName")))
     assert(!Files.exists(Paths.get(s"$newPath/$secondPostMdName")))
 
+    // put'em back
+    Files.move(
+      Paths.get(s"$srcPostsPath/$firstPostMdName"),
+      Paths.get(s"$newPath/$firstPostMdName"))
+    Files.move(
+      Paths.get(s"$srcPostsPath/$secondPostMdName"),
+      Paths.get(s"$newPath/$secondPostMdName"))
+
     assertResult(
       expected = stringFromFile(s"$expectedPath/index.html"))(
         actual = stringFromFile(s"$targetPath/index.html"))
@@ -60,14 +68,6 @@ class ScalaticSuite extends FunSuite with BeforeAndAfter with ScalaFutures {
     assertResult(
       expected = stringFromFile(s"$expectedPath/$secondPostHtmlName"))(
         actual = stringFromFile(s"$targetPath/$secondPostHtmlName"))
-
-    // put'em back
-    Files.move(
-      Paths.get(s"$srcPostsPath/$firstPostMdName"),
-      Paths.get(s"$newPath/$firstPostMdName"))
-    Files.move(
-      Paths.get(s"$srcPostsPath/$secondPostMdName"),
-      Paths.get(s"$newPath/$secondPostMdName"))
 
     // delete the source/posts and target folders
     deleteFolder(s"$basePath/target")

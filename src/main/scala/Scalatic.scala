@@ -1,12 +1,11 @@
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 
-import org.joda.time.format.{ISODateTimeFormat, DateTimeFormat}
-
 import scala.collection.JavaConverters._
-
-import org.joda.time.DateTime
 import scala.language.implicitConversions
+
+import org.joda.time.LocalDateTime
+import org.joda.time.format.{DateTimeFormat, ISODateTimeFormat}
 import scalaj.http.{Http, HttpOptions}
 
 object Scalatic extends App {
@@ -64,7 +63,7 @@ object Scalatic extends App {
   }
   implicit def tabs(value: Int): Tabs = new Tabs(value)
 
-  case class PostSummary(url: String, title: String, date: DateTime)
+  case class PostSummary(url: String, title: String, date: LocalDateTime)
     extends Ordered[PostSummary] {
     override def compare(that: PostSummary): Int = that.date.compareTo(this.date)
   }
@@ -105,7 +104,7 @@ object Scalatic extends App {
     val title = fileNameNoDate.mkString(" ")
 
     val maxi = fileNamePiecesNoExt.length - 1
-    val date = new DateTime(
+    val date = new LocalDateTime(
       fileNamePiecesNoExt(maxi - 4).toInt,
       fileNamePiecesNoExt(maxi - 3).toInt,
       fileNamePiecesNoExt(maxi - 2).toInt,
