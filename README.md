@@ -6,7 +6,7 @@
 
 Dead simple static blog generator written in Scala with minimum dependencies.
 
-Uses GitHub API to render as HTML posts written in GitHub-flavored Markdwon
+Uses GitHub API to render as HTML posts written in GitHub-flavored Markdown
 syntax.
 
 Should be used together with the
