@@ -1,7 +1,11 @@
     <footer class="site-footer">
-      <span class="site-footer-owner"><a href="">Some link</a> in a cool footer owned by <a href="">You</a> &copy; 2015-.</span>
+      <span class="site-footer-owner"><a href="">Some link</a> in a cool footer owned by <a href="">You</a></span>
       <span class="site-footer-credits">This page uses a customized version of the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
     </footer>
   </section>
+  <script src="jquery-1.12.4.min.js"></script>
+  <script>
+      $('.site-footer-owner').append(' &copy; ' + (new Date().getFullYear()));
+  </script>
 </body>
 </html>
